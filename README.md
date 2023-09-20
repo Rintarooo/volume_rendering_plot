@@ -1,6 +1,8 @@
 # Plot volume rendering
 ## Usage
 
+## Setup
+
 * pyenv + poetry
     * python 3.10.1
 
@@ -41,4 +43,9 @@ python -V
 
 # add packages
 poetry add numpy matplotlib plotly scipy
+```
+
+## Execute Python
+```bash
+poetry run python main.py
 ```

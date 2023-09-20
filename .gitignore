@@ -3,3 +3,4 @@ __pycache__/
 dat/
 *.png
 out/
+logs/*.log
