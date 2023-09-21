@@ -33,7 +33,7 @@ if __name__ == "__main__":
     for i in range(num_camera):
         camera_mover = CameraMover()
         radius = 5
-        degree = 360/num_camera * i
+        degree = 360./num_camera * i
         angle = np.radians(degree)
         step_x = radius*np.cos(angle)
         step_z = radius*np.sin(angle)

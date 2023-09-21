@@ -67,13 +67,13 @@ class RayPlotter(BasePlotter):
         traces_ray = [trace1, trace2]
         return traces_ray
 
-    def get_trace_sampling_point(self, ray_dir_0_sample):
+    def get_trace_sampling_point(self, sampling_points):
         trace1 = {
             "name": "sampling_point", 
             "type": "scatter3d", 
-            "x": ray_dir_0_sample[:,0], # 点のx座標
-            "y": ray_dir_0_sample[:,1], 
-            "z": ray_dir_0_sample[:,2], 
+            "x": sampling_points[:,0], # 点のx座標
+            "y": sampling_points[:,1], 
+            "z": sampling_points[:,2], 
             # "sizeref": 0.1, 
             # "lighting": {"ambient": 0.8}, 
             # "sizemode": "scaled", 
@@ -89,8 +89,9 @@ class RayPlotter(BasePlotter):
                 "opacity": 0.2
             }
         }
-        trace_sampling_point = [trace1]
-        return trace_sampling_point
+        # trace_sampling_point = [trace1]
+        # return trace_sampling_point
+        return trace1
 
 
 if __name__ == "__main__":

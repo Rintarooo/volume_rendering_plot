@@ -10,6 +10,7 @@ from src.volume_rendering.ray_plotter import RayPlotter
 from src.volume_rendering.raycaster import RayCaster
 from src.volume_rendering.aabb import AABB
 
+# poetry run python -m src.tests.aabb_test
 
 if __name__ == "__main__":
     plot_scale = 1.0
@@ -17,14 +18,14 @@ if __name__ == "__main__":
     cam_lookat = np.array([0, 0, -1])
     cam_up = np.array([0, 1, 0])
     cam_right = np.cross(cam_lookat, cam_up)
-    fov = 45
+    fov = 30#45
     w_, h_ = 3, 3#4, 4##32, 32#256,256#64,64#128, 128#1,1#5,5
 
     cam_plotter = CameraPlotter(w_, h_, cam_pos, cam_lookat, cam_up, fov, plot_scale)
     raycaster = RayCaster(w_, h_, cam_pos, cam_lookat, cam_up, cam_right, fov)
     ray_plotter = RayPlotter()
 
-    pos_cube_center = (0,0,-3)#(0,0,9)#(0,0,7)#(0,0,-3)
+    pos_cube_center = (0,0,0)#(0,0,9)#(0,0,7)#(0,0,-3)
     mint, maxt = -1.0, 1.0#-2.0, 2.0#-3.0, 3.0#-0.5, 0.5
     rgba = 'rgba(0,0,0,0.2)'
     cube_plotter = CubePlotter(pos_cube_center, mint, maxt, rgba)
@@ -35,10 +36,20 @@ if __name__ == "__main__":
     aabb = AABB(pos_cube_center, mint, maxt, grid_resolution)
 
     
-    num_cam = 1
+    num_cam = 3
     for i in range(num_cam):
 
         cam_mover = CameraMover()
+        
+        radius = 4
+        degree = 360./num_cam * i
+        angle = np.radians(degree)
+        step_x = radius*np.cos(angle)
+        step_z = radius*np.sin(angle)
+        cam_mover.step_x(step_x)
+        cam_mover.step_z(step_z)
+        cam_mover.rotate_y(-360./num_cam * i - 90)
+
         M_ext = cam_mover.M_ext
         cam_plotter.add_cam(M_ext, plot_color='blue', plot_name='world')
         cam_plotter.add_trace_cam_coord()
@@ -56,7 +67,7 @@ if __name__ == "__main__":
         trace_ray_lis = []
         trace_sampling_point_lis = []
 
-        num_point = 5#128#30#10
+        num_point = 10#5#128#30
         tmax_margin = 2.0
         for px in range(w_):
             for py in range(h_):
@@ -77,11 +88,11 @@ if __name__ == "__main__":
                 # ray_plotter.fig_show()
                 cam_plotter.fig.add_traces(traces_ray)
 
-                # if if_intersect:
-                #     dt = (tmax-tmin)/num_point
-                #     # r(t) = o + td = o + (tmin+dt*i)d
-                #     sampling_point = np.array([cam_pos + (tmin + dt*i) * ray_dirs[ray_idx] for i in range(num_point)])
-                #     trace_sampling_point = get_trace_sampling_point(sampling_point)
-                #     trace_sampling_point_lis.append(trace_sampling_point)
+                if if_intersect:
+                    dt = (tmax-tmin)/num_point
+                    # r(t) = o + td = o + (tmin+dt*i)d
+                    sampling_points = np.array([cam_pos_world + (tmin + dt*i) * ray_dir_world for i in range(num_point)])
+                    trace_sampling_points = ray_plotter.get_trace_sampling_point(sampling_points)
+                    cam_plotter.fig.add_trace(trace_sampling_points)
         
     cam_plotter.fig_show()
