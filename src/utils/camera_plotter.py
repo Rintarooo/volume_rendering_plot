@@ -17,11 +17,11 @@ def normalize(x):
         return x
 
 class CameraPlotter(BasePlotter):
-    def __init__(self, w_, h_, plot_scale):
+    def __init__(self, w_, h_, cam_pos, cam_lookat, cam_up, fov = 45, plot_scale=1.0):
         super().__init__()
-        self.cam_pos = np.array([0, 0, 0])#normalize(np.array([0, 0, 0]))
-        self.cam_lookat = np.array([0, 0, -1])#normalize(np.array([0, 0, -1]))
-        self.cam_up = np.array([0, 1, 0])#normalize(np.array([0, 1, 0]))
+        self.cam_pos = cam_pos
+        self.cam_lookat = cam_lookat
+        self.cam_up = cam_up
         # self.look_dir = normalize(self.cam_lookat - self.cam_pos)# look direction
         # self.cam_right = np.cross(self.look_dir, self.cam_up)
         self.cam_right = normalize(np.cross(self.cam_lookat, self.cam_up))
@@ -31,6 +31,10 @@ class CameraPlotter(BasePlotter):
 
         self.w_ = w_
         self.h_ = h_
+        # カメラからスクリーンまでの距離
+        self.fl_x = w_ / (2. * np.tan(np.radians(fov) * 0.5))
+        self.fl_y = h_ / (2. * np.tan(np.radians(fov) * 0.5))
+
 
         self.plot_scale = plot_scale
         # logger.debug(f"self.plot_scale: {self.plot_scale}")
@@ -85,7 +89,13 @@ class CameraPlotter(BasePlotter):
 
         cam_pyramid_world = np.array(self.cam_pyramid)
         # cam *= self.plot_scale
-        # cam[2,:] *= self.fl_x
+        # logger.debug(f"cam_pyramid_world: {cam_pyramid_world}")
+        ## [x',y',z'] = [x/fl_x, y/fl_y, 1]
+        cam_pyramid_world[0,:] *= 1./self.fl_x
+        cam_pyramid_world[1,:] *= 1./self.fl_y
+        # cam_pyramid_world[2,:] *= self.fl_y
+
+        # logger.debug(f"after cam_pyramid_world: {cam_pyramid_world}")
 
 
         # cam = -((R @ cam).T - t).T        
@@ -121,6 +131,7 @@ class CameraPlotter(BasePlotter):
         # self.cam_lis.append((cam, plot_color, plot_name))
     
     def add_trace_cam_coord(self):
+        assert len(self.cam_pos_world_lis) > 0, "you should call method, add_cam"
         for i in range(len(self.cam_pos_world_lis)):
             cam_pos = self.cam_pos_world_lis[i]
             cam_up = self.cam_up_world_lis[i]
@@ -274,6 +285,21 @@ class CameraPlotter(BasePlotter):
         # fig.add_trace(mesh)
         # return 
 
+    def add_trace_grid_img():
+        """
+        # 2次元グリッドの座標を定義
+        # x = [-width/2 + d for d in range(int(width/2))]#[-1.5, 0, 1.5]
+        # y = [-width/2 + d for d in range(int(width/2))]#[-1.5, 0, 1.5]
+        x = [-width/2 + d for d in range(width+1)]#[-1.5, -0.5, 0.5, 1.5]
+        y = [-height/2 + d for d in range(height+1)]#[-1.5, -0.5, 0.5, 1.5]
+        # print(x, y)
+        for i in range(width+1):
+            for j in range(height+1):
+                trace_gridx = go.Scatter3d(x=[x[j]]*(width+1), y=y, z=[camera[-1][-1] for _ in range(width+1)], mode='lines', line_width=2, line_color=color, name="pixel")
+                fig.add_trace(trace_gridx)
+                trace_gridy = go.Scatter3d(x=x, y=[y[i]]*(height+1), z=[camera[-1][-1] for _ in range(height+1)], mode='lines', line_width=2, line_color=color, name="pixel")
+                fig.add_trace(trace_gridy)
+        """
 
     # def add_traces_to_fig(self, cam, lines):
         # self.add_trace_cam_coord()
@@ -291,5 +317,11 @@ class CameraPlotter(BasePlotter):
 
 if __name__ == "__main__":
     # from logger_global import logger
-    w_, h_, plot_scale = 3, 3, 1.0
-    plotter = CameraPlotter(w_, h_, plot_scale)
+    w_, h_ = 3, 3
+    plot_scale = 1.0
+    fov = 80#120#45
+    cam_pos = np.array([0, 0, 0])
+    cam_lookat = np.array([0, 0, -1])
+    cam_up = np.array([0, 1, 0])
+        
+    cam_plotter = CameraPlotter(w_, h_, cam_pos, cam_lookat, cam_up, fov, plot_scale)

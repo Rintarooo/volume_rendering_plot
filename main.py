@@ -9,10 +9,14 @@ from src.volume_rendering.cube_plotter import CubePlotter
 
 
 if __name__ == "__main__":
-    w_, h_, plot_scale = 3, 3, 1.0
-    # fig = go.Figure()
-    # plotter = CameraPlotter(fig, w_, h_, plot_scale)
-    cam_plotter = CameraPlotter(w_, h_, plot_scale)
+    w_, h_ = 3, 3
+    plot_scale = 1.0
+    fov = 80#120#45
+    cam_pos = np.array([0, 0, 0])
+    cam_lookat = np.array([0, 0, -1])
+    cam_up = np.array([0, 1, 0])
+        
+    cam_plotter = CameraPlotter(w_, h_, cam_pos, cam_lookat, cam_up, fov, plot_scale)
     mover = CameraMover()
 
     a = 3
@@ -22,6 +26,9 @@ if __name__ == "__main__":
     cube_plotter = CubePlotter(pos_cube_center, mint, maxt, rgba)
 
 
+    # camera_mover = CameraMover()
+    # M_ext = camera_mover.M_ext
+    # cam_plotter.add_cam(M_ext, plot_color='blue', plot_name='world')
     num_camera = 10
     for i in range(num_camera):
         camera_mover = CameraMover()
@@ -47,4 +54,5 @@ if __name__ == "__main__":
     cam_plotter.add_trace_cam_screen()
     trace_cube = cube_plotter.get_trace_cube()
     cam_plotter.fig.add_trace(trace_cube)
+    # cube_plotter.add_trace_cube()
     cam_plotter.fig_show()
