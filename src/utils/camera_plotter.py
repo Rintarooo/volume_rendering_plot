@@ -2,6 +2,9 @@ import numpy as np
 import plotly.graph_objects as go
 
 from src.utils.logger_global import logger
+from src.utils.base_plotter import BasePlotter
+
+# poetry run python -m src.utils.camera_plotter
 
 def degree2radian(deg):
     return deg * np.pi / 180.
@@ -13,8 +16,9 @@ def normalize(x):
     else:# array elements are all zero
         return x
 
-class CameraPlotter:
-    def __init__(self, fig, w_, h_, plot_scale):
+class CameraPlotter(BasePlotter):
+    def __init__(self, w_, h_, plot_scale):
+        super().__init__()
         self.cam_pos = np.array([0, 0, 0])#normalize(np.array([0, 0, 0]))
         self.cam_lookat = np.array([0, 0, -1])#normalize(np.array([0, 0, -1]))
         self.cam_up = np.array([0, 1, 0])#normalize(np.array([0, 1, 0]))
@@ -38,7 +42,7 @@ class CameraPlotter:
         self.cam_plot_name_lis = []
         self.ray_dirs_world_lis = []
 
-        self.fig = fig
+        # self.fig = fig
 
 
     def get_pyramid(self):
@@ -284,21 +288,8 @@ class CameraPlotter:
 
         # self.fig.add_traces(data)
     
-    def fig_show(self, plot_range = 15):
-        self.fig.update_layout(
-            scene =dict(
-                xaxis = dict(range=(-plot_range, plot_range)),
-                yaxis = dict(range=(-plot_range, plot_range)),
-                zaxis = dict(range=(-plot_range, plot_range)),
-                camera = dict(
-                    up = dict(x=0,y=1,z=0),
-                )
-        ))
-        self.fig.update_layout(showlegend=False)
-        self.fig.show()
-
 
 if __name__ == "__main__":
-    from logger_global import logger
+    # from logger_global import logger
     w_, h_, plot_scale = 3, 3, 1.0
     plotter = CameraPlotter(w_, h_, plot_scale)

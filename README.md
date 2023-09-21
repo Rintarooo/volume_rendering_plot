@@ -47,5 +47,6 @@ poetry add numpy matplotlib plotly scipy
 
 ## Execute Python
 ```bash
-poetry run python main.py
+# poetry run python main.py
+poetry run python -m main
 ```

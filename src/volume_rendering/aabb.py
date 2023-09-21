@@ -1,6 +1,15 @@
 import numpy as np
 
 from src.utils.logger_global import logger
+from src.volume_rendering.cube_plotter import CubePlotter
+
+# poetry run python -m src.volume_rendering.aabb
+
+def swap_val(a, b):
+    swap_tmp = a
+    a = b
+    b = swap_tmp
+    return a, b
 
 class AABB():
     def __init__(self, pos_cube_center, mint, maxt, grid_resolution) -> None:
@@ -204,6 +213,8 @@ if __name__ == "__main__":
     pos_cube_center = (0,0,9)#(0,0,7)#(0,0,-3)
     mint, maxt = -2.0, 2.0#-3.0, 3.0#-1.0, 1.0#-0.5, 0.5
     rgba = 'rgba(0,0,0,0.2)'
-    trace_cube = get_trace_cube(pos_cube_center, mint, maxt, rgba)
+    cube_plotter = CubePlotter(pos_cube_center, mint, maxt, rgba)
+    trace_cube = cube_plotter.get_trace_cube()
+
     grid_resolution = 16#128#30
     aabb = AABB(pos_cube_center, mint, maxt, grid_resolution)
