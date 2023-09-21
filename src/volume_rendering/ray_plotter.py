@@ -56,7 +56,7 @@ class RayPlotter(BasePlotter):
             "x": [ray_[0]], # 矢印の始点のx座標
             "y": [ray_[1]], 
             "z": [ray_[2]], 
-            "sizeref": 0.1, 
+            "sizeref": 0.05, 
             "lighting": {"ambient": 0.8}, 
             "sizemode": "scaled", 
             "hoverinfo": "x+y+z+name", 
