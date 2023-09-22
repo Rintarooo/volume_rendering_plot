@@ -31,12 +31,17 @@ class RayPlotter(BasePlotter):
         self.ray_dirs_list = []
     
 
-    def get_traces_ray(self, cam_pos, ray_dir, tmax, tmax_margin, plot_name):
+    def get_traces_ray(self, cam_pos, ray_dir, tmax, tmax_margin, if_intersect, plot_name):
         # tmax = 1.0
         # logger.debug(f"cam_pos: {cam_pos}, ray_dir_0: {ray_dir_0}")
         ray_ = cam_pos + (tmax+tmax_margin) * ray_dir
+        width = 3
+        cone_size = 0.05
+        if not if_intersect:
+            width = 1
+            cone_size = 0.01
         trace1 = {
-            "line": {"width": 3}, 
+            "line": {"width": width}, 
             "mode": "lines", 
             "name": plot_name,#"ray_", 
             "type": "scatter3d", 
@@ -56,7 +61,7 @@ class RayPlotter(BasePlotter):
             "x": [ray_[0]], # 矢印の始点のx座標
             "y": [ray_[1]], 
             "z": [ray_[2]], 
-            "sizeref": 0.05, 
+            "sizeref": cone_size, 
             "lighting": {"ambient": 0.8}, 
             "sizemode": "scaled", 
             "hoverinfo": "x+y+z+name", 

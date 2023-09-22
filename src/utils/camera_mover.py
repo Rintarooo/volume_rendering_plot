@@ -49,6 +49,16 @@ class CameraMover:
                           [0, 0, 0, 1]], dtype=float)
         self.M_ext = R_z @ self.M_ext
 
+    # def rotate_lookat_world(self, cam_pos, aim_pos):
+    #     vec1 = aim_pos - cam_pos
+    #     vec2 = lookat_pos - cam_pos
+    #     rad = np.arctan2(vec[0], vec[1], vec[2])
+    #     angle = np.rad2deg(rad)
+    #     self.rotate_x(angle)
+    #     self.rotate_y(angle)
+    #     self.rotate_z(angle)
+        
+
 if __name__ == "__main__":
     from logger_global import logger
     mover = CameraMover()

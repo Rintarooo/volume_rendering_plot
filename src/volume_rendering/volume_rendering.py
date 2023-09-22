@@ -56,6 +56,7 @@ def render_img_from_volume(
             ray_idx = py * w_ + px
             ray_dir = ray_dirs[px][py]
             tmin, tmax, if_intersect = aabb.ray_intersect_and_get_mint(ray_dir, cam_pos)
+            logger.debug(f"[px,py]: [{px},{py}], if_intersect: {if_intersect}")
             if not if_intersect:
                 tmin = 4.5
                 tmax = 9.5
@@ -64,6 +65,8 @@ def render_img_from_volume(
                 render_color = background_color
             assert tmin < tmax, "ray marching range"
             delta = (tmax-tmin)/num_points
+
+            logger.info(f"ray idx: {ray_idx}/{w_*h_}")
 
             if if_intersect:
                 cnt_intersect += 1
@@ -94,13 +97,13 @@ def render_img_from_volume(
 
                     logger.debug(f"ray_idx: {ray_idx}, weight_i: {weight_i}, delta: {delta}, ray step: {i}, point_pos: {point_pos}, cur_density: {cur_density}")
                     # render_color += np.uint8(weight_i*color)
-                    # render_color += weight_i*color
-                    render_color += weight_i*color*5
+                    render_color += weight_i*color
+                    # render_color += weight_i*color*5
                 
             # logger.debug(f"ray_idx: {ray_idx}, px: {px}, py: {py}, np.uint8(render_color): {np.uint8(render_color)}")
             # logger.debug(f"img_x: {w_-px-1}, img_y: {h_-py-1}")
             # render_img[py][px] = np.uint8(render_color)
-            logger.debug(f"transmittance: {T_}, background_color: {background_color}, render_color: {render_color}")
+            # logger.debug(f"transmittance: {T_}, background_color: {background_color}, render_color: {render_color}")
             render_color =  T_ * background_color + (1.0-T_) * render_color
             # render_img[w_-px-1][h_-py-1] = np.uint8(render_color)
             render_img[px][py] = np.uint8(render_color)

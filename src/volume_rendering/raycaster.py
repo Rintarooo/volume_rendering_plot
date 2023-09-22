@@ -63,7 +63,7 @@ class RayCaster():
                 # u_ = (px + .5*dw) - cx
                 # v_ = (py + .5*dh) - cy
 
-                logger.debug(f"[u_,v_]: [{u_},{v_}], px + .5: {px + .5}, cx:{self.cx}")
+                # logger.debug(f"[u_,v_]: [{u_},{v_}], px + .5: {px + .5}, cx:{self.cx}")
                 
                 ray_dir = self.cam_lookat + u_ * self.cam_right / self.fl_x + v_ * self.cam_up /self.fl_y
                 # ray_dir = np.array([u_ / dist_camera2plane, v_ / dist_camera2plane, -1.])

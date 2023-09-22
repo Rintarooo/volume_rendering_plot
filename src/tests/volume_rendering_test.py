@@ -19,21 +19,21 @@ if __name__ == "__main__":
     cam_lookat = np.array([0, 0, -1])
     cam_up = np.array([0, 1, 0])
     cam_right = np.cross(cam_lookat, cam_up)
-    fov = 30#45
-    w_, h_ = 4, 4#16, 16###32, 32#256,256#64,64#128, 128#1,1#5,5
+    fov = 80#30#45
+    w_, h_ = 256,256#64,64#16, 16#32, 32#4, 4##128, 128#1,1#5,5
 
     cam_plotter = CameraPlotter(w_, h_, cam_pos, cam_lookat, cam_up, fov, plot_scale)
     raycaster = RayCaster(w_, h_, cam_pos, cam_lookat, cam_up, cam_right, fov)
     ray_plotter = RayPlotter()
 
-    pos_cube_center = (0,0,-3)#(0,0,0)#(0,0,9)#(0,0,7)
+    pos_cube_center = (0,0,0)#(0,0,-3)#(0,0,9)#(0,0,7)
     mint, maxt = -1.0, 1.0#-2.0, 2.0#-3.0, 3.0#-0.5, 0.5
     rgba = 'rgba(0,0,0,0.2)'
     cube_plotter = CubePlotter(pos_cube_center, mint, maxt, rgba)
     trace_cube = cube_plotter.get_trace_cube()
     cam_plotter.fig.add_trace(trace_cube)
 
-    grid_resolution = 4#16#128#30
+    grid_resolution = 16#4#128#30
 
     
     aabb = AABB(pos_cube_center, mint, maxt, grid_resolution)
@@ -62,8 +62,29 @@ if __name__ == "__main__":
         # cam_mover.step_z(step_z)
         # cam_mover.rotate_y(-360./num_cam * i - 90)
 
+        step_x, step_y, step_z = -1.45, -1.10, -3.10
+        cam_mover.step_x(step_x)
+        cam_mover.step_y(step_y)
+        cam_mover.step_z(step_z)
+        cam_mover.rotate_x(17)
+        cam_mover.rotate_y(25)
+        # if i == 1:
+        #     # cam_mover.step_x(step_x)
+        #     # cam_mover.step_y(step_y)
+        #     # cam_mover.step_z(step_z)
+        #     cam_mover.rotate_x(17)
+        #     # cam_mover.rotate_y(-25)
+        #     cam_mover.rotate_z(-25)
+        # cam_mover.rotate_y(25)
+        # cam_mover.rotate_z(-25)
+        
+        # M_ext = cam_mover.M_ext
+        # _, cam_pos_world, _, _, _ = cam_plotter.cam2world(M_ext)
+        # aim_pos = np.array([0.,0.,0.])
+        # cam_mover.rotate_lookat_world(cam_pos_world, aim_pos)
+
         M_ext = cam_mover.M_ext
-        cam_plotter.add_cam(M_ext, plot_color='blue', plot_name='world')
+        cam_plotter.add_cam(M_ext, plot_color='blue', plot_name='cam'+str(i))
         cam_plotter.add_trace_cam_coord()
         # cam_plotter.add_trace_cam_screen()
 
@@ -79,13 +100,17 @@ if __name__ == "__main__":
         trace_ray_lis = []
         trace_sampling_point_lis = []
 
-        num_points = 5#10#128#30
+        num_points = 15#5#10#128#30
         tmax_margin = 2.0
 
 
         light_pos = np.array([0.,0.,0.])
-        render_img_from_volume(ray_dirs_world, w_, h_, num_points, aabb,cam_pos, light_pos)
+        render_img_from_volume(ray_dirs_world, w_, h_, num_points, aabb, cam_pos_world, light_pos)
 
+
+        ray_plot_flag = False
+        if not ray_plot_flag:
+            break
 
         for px in range(w_):
             for py in range(h_):
@@ -101,7 +126,8 @@ if __name__ == "__main__":
                 assert tmin < tmax, "ray marching range"
                 # for plotly
                 ray_idx = py*h_+px
-                traces_ray = ray_plotter.get_traces_ray(cam_pos_world, ray_dir_world, tmax, tmax_margin, plot_name= "ray"+str(ray_idx))
+                logger.info(f"ray idx: {ray_idx}/{w_*h_}")
+                traces_ray = ray_plotter.get_traces_ray(cam_pos_world, ray_dir_world, tmax, tmax_margin, if_intersect, plot_name= "ray"+str(ray_idx))
                 # ray_plotter.fig.add_traces(traces_ray)
                 # ray_plotter.fig_show()
                 cam_plotter.fig.add_traces(traces_ray)
