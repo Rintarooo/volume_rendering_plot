@@ -19,8 +19,8 @@ if __name__ == "__main__":
     cam_lookat = np.array([0, 0, -1])
     cam_up = np.array([0, 1, 0])
     cam_right = np.cross(cam_lookat, cam_up)
-    fov = 45#80#30
-    w_, h_ = 3,3#256,256#4, 4#16, 16##64,64#32, 32##128, 128#1,1#5,5
+    fov = 60#80#45#30
+    w_, h_ = 3, 3#256,256#16, 16#5,5#4, 4#64,64#32, 32##128, 128#1,1
 
     cam_plotter = CameraPlotter(w_, h_, cam_pos, cam_lookat, cam_up, fov, plot_scale)
     raycaster = RayCaster(w_, h_, cam_pos, cam_lookat, cam_up, cam_right, fov)
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     high_density_val = 0.95
     min_density_val, max_density_val = 0.2, 0.95#0.1, 0.2
     density_mode_lis = ["sphere", "cube"]
-    density_mode = density_mode_lis[1]
+    density_mode = density_mode_lis[1]#[0]
     aabb.create_density_volume(thres_pos, min_density_val, max_density_val, high_density_val, density_mode)
 
     
@@ -63,13 +63,15 @@ if __name__ == "__main__":
         # cam_mover.rotate_y(-360./num_cam * i - 90)
 
         # step_x, step_y, step_z = -1.45, -1.10, -3.10
-        # step_x, step_y, step_z = 1.45, 1.10, 3.10
+        step_x, step_y, step_z = 1.45, 1.10, 3.10
         # step_x, step_y, step_z = 0., 0., 3.
 
-        step_x, step_y, step_z = 2.5, 2.5, 2.5
+        # step_x, step_y, step_z = 2.5, 2.5, 2.5
         # step_x, step_y, step_z = 2.5, 2.5, 0
         # step_x, step_y, step_z = 2.5, 0., 2.5
         # step_x, step_y, step_z = 2.5, 0, 0
+        # step_x, step_y, step_z = -1, -1, -3
+
         # cam_mover.step_x(step_x)
         # cam_mover.step_y(step_y)
         # cam_mover.step_z(step_z)
@@ -78,18 +80,22 @@ if __name__ == "__main__":
 
         # if i == 1 or i == 2:
         if i == 0:
-            cam_mover.step_x(step_x)
-            cam_mover.step_y(step_y)
-            cam_mover.step_z(step_z)
+            # cam_mover.rotate_y(45)
+            # cam_mover.step_x(step_x)
+            # cam_mover.step_y(step_y)
+            # cam_mover.step_z(step_z)
             # cam_mover.rotate_x(90)
             # cam_mover.rotate_y(25)
             # cam_mover.rotate_z(-25)
             # cam_mover.rotate_y(25)
             # cam_mover.rotate_z(-25)
         
-            M_ext = cam_mover.M_ext
-            _, cam_pos_world, cam_lookat_world, _, _ = cam_plotter.cam2world(M_ext)
+            # M_ext = cam_mover.M_ext
+            # _, cam_pos_world, cam_lookat_world, _, _ = cam_plotter.cam2world(M_ext)
+            cam_pos_world = np.array([step_x,step_y,step_z])
+
             aim_pos_world = np.array([0.,0.,0.])
+            # aim_pos_world = np.array([0.,0.,step_z])
             # cam_mover.rotate_aim_pos_world(cam_pos_world, cam_lookat_world, aim_pos_world)
             cam_mover.rotate_aim_pos_world(cam_pos_world, cam_lookat, aim_pos_world)
 
@@ -99,7 +105,7 @@ if __name__ == "__main__":
         # cam_plotter.add_trace_cam_screen()
 
         ray_dirs_world, cam_pos_world = raycaster.raycast(M_ext)
-        # logger.debug(f"cam_pos_world: {cam_pos_world}")
+        logger.debug(f"ray_dirs_world.shape: {ray_dirs_world.shape}, cam_pos_world: {cam_pos_world}")
         # ray_idx_plot_lis = [0, int(len(ray_dirs)/2), int(len(ray_dirs))-1]#[0, int(len(ray_dirs)/4), int(len(ray_dirs)/2), int(len(ray_dirs)*3/4), int(len(ray_dirs))-1]#[0,4,8]
 
         # ray cast

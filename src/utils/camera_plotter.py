@@ -109,7 +109,7 @@ class CameraPlotter(BasePlotter):
     def add_cam(self, M_ext, plot_color, plot_name):
         logger.debug(f"plot_name: {plot_name}, M_ext: {M_ext}")
         cam_pyramid_world, cam_pos_world, cam_lookat_world, cam_up_world, cam_right_world = self.cam2world(M_ext)
-        logger.debug(f"plot_name: {plot_name}, cam_pos_world: {cam_pos_world}")
+        logger.debug(f"plot_name: {plot_name}, cam_pos: {self.cam_pos}, cam_pos_world: {cam_pos_world}")
         # self.cam_pyramid_world_lis.append((cam_pyramid_world, plot_color, plot_name))
         self.cam_pyramid_world_lis.append(cam_pyramid_world)
         self.cam_pos_world_lis.append(cam_pos_world)

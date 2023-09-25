@@ -30,7 +30,7 @@ filehandler.setFormatter(formatter)
 # logger.addHandler(streamhandler)
 logger.addHandler(filehandler)
 
-logger.setLevel(logging.DEBUG)  # DEBUG #INFO #WARNING
+logger.setLevel(logging.INFO)  # DEBUG #INFO #WARNING
 
 logger.info("Logger INFO mode Start!")
 logger.debug("Logger DEBUG mode Start!")

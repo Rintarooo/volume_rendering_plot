@@ -57,7 +57,8 @@ class CameraMover:
         # https://stackoverflow.com/questions/21830340/understanding-glmlookat
         z_ = aim_pos - cam_pos
         logger.debug(f"aim_pos: {aim_pos},  cam_pos: {cam_pos}, [z_]: [{z_}]")
-        z_[2] *= cam_lookat[2]
+        # z_[2] *= cam_lookat[2]
+        z_ *= cam_lookat[2]
         logger.debug(f"z_[2] *= cam_lookat[2] aim_pos: {aim_pos},  cam_pos: {cam_pos}, [z_]: [{z_}]")
         z_ = normalize(z_)
         logger.debug(f"z_ = normalize(z_) aim_pos: {aim_pos},  cam_pos: {cam_pos}, [z_]: [{z_}]")
@@ -78,18 +79,31 @@ class CameraMover:
         #                [-x_[2],-y_[2],-z_[2], 0],
         #                [0, 0, 0, 1]], dtype=float)
         # self.rotate_z(90)
-        logger.debug(f"cam_pos: {cam_pos}")
+        # logger.debug(f"cam_pos: {cam_pos}")
         # R_ = np.array([[x_[0],y_[0],z_[0], -cam_pos[0]],
         #                [x_[1],y_[1],z_[1], -cam_pos[1]],
         #                [x_[2],y_[2],z_[2], -cam_pos[2]],
         #                [0, 0, 0, 1]], dtype=float)
-        R_ = np.array([[x_[0],y_[0],z_[0], 0],
-                       [x_[1],y_[1],z_[1], 0],
-                       [x_[2],y_[2],z_[2], 0],
-                       [0, 0, 0, 1]], dtype=float)
+        # R_ = np.array([[x_[0],y_[0],z_[0], 0],
+        #                [x_[1],y_[1],z_[1], 0],
+        #                [x_[2],y_[2],z_[2], 0],
+        #                [0, 0, 0, 1]], dtype=float)
+        # R_ = np.array([[x_[0],y_[0],z_[0], 0],
+        #                [x_[1],y_[1],z_[1], 0],
+        #                [x_[2],y_[2],z_[2], 0],
+        #                [-np.dot(x_, cam_pos), -np.dot(y_, cam_pos), -np.dot(z_, cam_pos), 1]], dtype=float)
+        # R_ = np.array([[x_[0],x_[1],x_[2], 0],
+        #                [y_[0],y_[1],y_[2], 0],
+        #                [z_[0],z_[1],z_[2], 0],
+        #                [0, 0, 0, 0]], dtype=float)
+        R_ = np.array([[x_[0],x_[1],x_[2], -np.dot(x_, cam_pos)],
+                       [y_[0],y_[1],y_[2], -np.dot(y_, cam_pos)],
+                       [z_[0],z_[1],z_[2], -np.dot(z_, cam_pos)],
+                       [0, 0, 0, 0]], dtype=float)
         # self.M_ext = R_
         
         logger.debug(f"self.M_ext: {self.M_ext}")
+        # self.rotate_y(90)
         self.M_ext = R_ @ self.M_ext
         # self.M_ext = R_
         logger.debug(f"R_ @ self.M_ext: {self.M_ext}")

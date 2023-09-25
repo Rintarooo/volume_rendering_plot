@@ -29,13 +29,17 @@ def render_img_from_volume(
     
     # for each ray    
     channels = 3
-    render_img = np.zeros([w_, h_, channels])
+    # render_img = np.zeros([w_, h_, channels])
+    render_img = np.zeros([h_, w_, channels])
     
     ## for density plot
     density_plot_dic = {"density_lis":[], "tmin":0, "tmax":0, "ray_idx":0}
-    density_plot_index_ray = int(len(ray_dirs)/2)#5
+    # density_plot_index_ray = int(len(ray_dirs)/2)#5
+    density_plot_index_ray = int(h_ * w_ /2)#5
+    logger.debug(f"density_plot_index_ray: {density_plot_index_ray}")
     density_plot_dic["ray_idx"] = density_plot_index_ray
-    assert density_plot_index_ray < len(ray_dirs), "ray index is over list ray_dirs"
+    assert density_plot_index_ray < ray_dirs.shape[0]*ray_dirs.shape[1], "ray index is over list ray_dirs"
+
 
     # for ray_idx in range(len(ray_dirs)):
     cnt_intersect = 0
@@ -53,7 +57,8 @@ def render_img_from_volume(
             # ray_idx = idx_px + py
             # assert ray_idx < len(ray_dirs), "ray index is over list ray_dirs"
             # ray_dir = ray_dirs[ray_idx]
-            ray_idx = py * w_ + px
+            # ray_idx = py * w_ + px
+            ray_idx = px * w_ + py
             ray_dir = ray_dirs[px][py]
             tmin, tmax, if_intersect = aabb.ray_intersect_and_get_mint(ray_dir, cam_pos)
             logger.debug(f"[px,py]: [{px},{py}], if_intersect: {if_intersect}")
@@ -106,7 +111,8 @@ def render_img_from_volume(
             # logger.debug(f"transmittance: {T_}, background_color: {background_color}, render_color: {render_color}")
             render_color =  T_ * background_color + (1.0-T_) * render_color
             # render_img[w_-px-1][h_-py-1] = np.uint8(render_color)
-            render_img[px][py] = np.uint8(render_color)
+            # render_img[px][py] = np.uint8(render_color)
+            render_img[py][px] = np.uint8(render_color)
             
 
     # plt.imsave("./render.png", render_img)
