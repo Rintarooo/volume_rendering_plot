@@ -56,7 +56,8 @@ class RayCaster():
                 # v_ =  1. - (py+.5) / (float)(self.h_-1) * 2.
 
                 u_ = (px + .5) - self.cx
-                v_ = (py + .5) - self.cy
+                # v_ = (py + .5) - self.cy
+                v_ = -((py + .5) - self.cy)
                 # u_ = px - self.cx
                 # v_ = py - self.cy
 
@@ -81,8 +82,8 @@ class RayCaster():
                 ray_dir_world = normalize(ray_dir_world)
 
                 ray_dirs_world[px][py] = ray_dir_world
-                # logger.debug(f"[u_,v_]: [{u_},{v_}], [px,py]:[{px},{py}]")
-                # logger.debug(f"ray_dir_world: {ray_dir_world}, ray_dir:{ray_dir}")
+                logger.debug(f"[u_,v_]: [{u_},{v_}], [px,py]: [{px},{py}]")
+                logger.debug(f"ray_dir_world: {ray_dir_world}, ray_dir:{ray_dir}")
         # grid = np.mgrid[-w_/2:w_/2:1.0, -w_/2:w_/2:1.0]
         return ray_dirs_world, cam_pos_world
     

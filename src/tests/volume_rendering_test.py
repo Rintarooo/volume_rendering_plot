@@ -19,8 +19,8 @@ if __name__ == "__main__":
     cam_lookat = np.array([0, 0, -1])
     cam_up = np.array([0, 1, 0])
     cam_right = np.cross(cam_lookat, cam_up)
-    fov = 80#30#45
-    w_, h_ = 256,256#64,64#16, 16#32, 32#4, 4##128, 128#1,1#5,5
+    fov = 45#80#30
+    w_, h_ = 3,3#256,256#4, 4#16, 16##64,64#32, 32##128, 128#1,1#5,5
 
     cam_plotter = CameraPlotter(w_, h_, cam_pos, cam_lookat, cam_up, fov, plot_scale)
     raycaster = RayCaster(w_, h_, cam_pos, cam_lookat, cam_up, cam_right, fov)
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     aabb.create_density_volume(thres_pos, min_density_val, max_density_val, high_density_val, density_mode)
 
     
-    num_cam = 1
+    num_cam = 1#2
     for i in range(num_cam):
 
         cam_mover = CameraMover()
@@ -62,26 +62,36 @@ if __name__ == "__main__":
         # cam_mover.step_z(step_z)
         # cam_mover.rotate_y(-360./num_cam * i - 90)
 
-        step_x, step_y, step_z = -1.45, -1.10, -3.10
-        cam_mover.step_x(step_x)
-        cam_mover.step_y(step_y)
-        cam_mover.step_z(step_z)
-        cam_mover.rotate_x(17)
-        cam_mover.rotate_y(25)
-        # if i == 1:
-        #     # cam_mover.step_x(step_x)
-        #     # cam_mover.step_y(step_y)
-        #     # cam_mover.step_z(step_z)
-        #     cam_mover.rotate_x(17)
-        #     # cam_mover.rotate_y(-25)
-        #     cam_mover.rotate_z(-25)
+        # step_x, step_y, step_z = -1.45, -1.10, -3.10
+        # step_x, step_y, step_z = 1.45, 1.10, 3.10
+        # step_x, step_y, step_z = 0., 0., 3.
+
+        step_x, step_y, step_z = 2.5, 2.5, 2.5
+        # step_x, step_y, step_z = 2.5, 2.5, 0
+        # step_x, step_y, step_z = 2.5, 0., 2.5
+        # step_x, step_y, step_z = 2.5, 0, 0
+        # cam_mover.step_x(step_x)
+        # cam_mover.step_y(step_y)
+        # cam_mover.step_z(step_z)
+        # cam_mover.rotate_x(17)
         # cam_mover.rotate_y(25)
-        # cam_mover.rotate_z(-25)
+
+        # if i == 1 or i == 2:
+        if i == 0:
+            cam_mover.step_x(step_x)
+            cam_mover.step_y(step_y)
+            cam_mover.step_z(step_z)
+            # cam_mover.rotate_x(90)
+            # cam_mover.rotate_y(25)
+            # cam_mover.rotate_z(-25)
+            # cam_mover.rotate_y(25)
+            # cam_mover.rotate_z(-25)
         
-        # M_ext = cam_mover.M_ext
-        # _, cam_pos_world, _, _, _ = cam_plotter.cam2world(M_ext)
-        # aim_pos = np.array([0.,0.,0.])
-        # cam_mover.rotate_lookat_world(cam_pos_world, aim_pos)
+            M_ext = cam_mover.M_ext
+            _, cam_pos_world, cam_lookat_world, _, _ = cam_plotter.cam2world(M_ext)
+            aim_pos_world = np.array([0.,0.,0.])
+            # cam_mover.rotate_aim_pos_world(cam_pos_world, cam_lookat_world, aim_pos_world)
+            cam_mover.rotate_aim_pos_world(cam_pos_world, cam_lookat, aim_pos_world)
 
         M_ext = cam_mover.M_ext
         cam_plotter.add_cam(M_ext, plot_color='blue', plot_name='cam'+str(i))
@@ -89,6 +99,7 @@ if __name__ == "__main__":
         # cam_plotter.add_trace_cam_screen()
 
         ray_dirs_world, cam_pos_world = raycaster.raycast(M_ext)
+        # logger.debug(f"cam_pos_world: {cam_pos_world}")
         # ray_idx_plot_lis = [0, int(len(ray_dirs)/2), int(len(ray_dirs))-1]#[0, int(len(ray_dirs)/4), int(len(ray_dirs)/2), int(len(ray_dirs)*3/4), int(len(ray_dirs))-1]#[0,4,8]
 
         # ray cast
@@ -108,10 +119,15 @@ if __name__ == "__main__":
         render_img_from_volume(ray_dirs_world, w_, h_, num_points, aabb, cam_pos_world, light_pos)
 
 
-        ray_plot_flag = False
+        ray_plot_flag = True#False
+        plot_thres_reso = 64
+        if w_ >= plot_thres_reso:
+            ray_plot_flag = False
+            logger.info(f"not plot ray. beacause w_ : {w_} >= {plot_thres_reso}")
         if not ray_plot_flag:
-            break
+            continue
 
+        # ray_idx = 0
         for px in range(w_):
             for py in range(h_):
             # for ray_idx in ray_idx_plot_lis:
@@ -125,9 +141,13 @@ if __name__ == "__main__":
                     tmax = tmax_0
                 assert tmin < tmax, "ray marching range"
                 # for plotly
-                ray_idx = py*h_+px
+                # ray_idx = py*h_+px
+                # ray_idx = py+px*h_
+                # ray_idx = py*w_+px
+                ray_idx = px*w_+py
                 logger.info(f"ray idx: {ray_idx}/{w_*h_}")
                 traces_ray = ray_plotter.get_traces_ray(cam_pos_world, ray_dir_world, tmax, tmax_margin, if_intersect, plot_name= "ray"+str(ray_idx))
+                # ray_idx += 1
                 # ray_plotter.fig.add_traces(traces_ray)
                 # ray_plotter.fig_show()
                 cam_plotter.fig.add_traces(traces_ray)

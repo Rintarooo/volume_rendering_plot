@@ -102,9 +102,13 @@ class AABB():
         #     print(f"tmin_z: {tmin_z}, tmax_z: {tmax_z}")
         # else:
         #     tmin_z, tmax_z = 100, 100
-        inv_ray_dir_z = 1. / ray_dir[2]
-        tmin_z = (self.min_z - camera_pos[2]) * inv_ray_dir_z
-        tmax_z = (self.max_z - camera_pos[2]) * inv_ray_dir_z
+        if ray_dir[2] == 0:
+            tmin_z = -np.inf
+            tmax_z = np.inf
+        else:
+            inv_ray_dir_z = 1. / ray_dir[2]
+            tmin_z = (self.min_z - camera_pos[2]) * inv_ray_dir_z
+            tmax_z = (self.max_z - camera_pos[2]) * inv_ray_dir_z
         if (tmin_z > tmax_z): tmin_z, tmax_z = swap_val(tmin_z, tmax_z)
         
         if tmin > tmax_z or tmin_z > tmax:

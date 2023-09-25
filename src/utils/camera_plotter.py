@@ -3,18 +3,9 @@ import plotly.graph_objects as go
 
 from src.utils.logger_global import logger
 from src.utils.base_plotter import BasePlotter
+from src.utils.np_vec import normalize
 
 # poetry run python -m src.utils.camera_plotter
-
-def degree2radian(deg):
-    return deg * np.pi / 180.
-
-def normalize(x):
-    # logger.debug(f"x:{x}, np.any(x):{np.any(x)}")
-    if np.any(x):
-        return x / np.linalg.norm(x)
-    else:# array elements are all zero
-        return x
 
 class CameraPlotter(BasePlotter):
     def __init__(self, w_, h_, cam_pos, cam_lookat, cam_up, fov = 45, plot_scale=1.0):
@@ -116,7 +107,9 @@ class CameraPlotter(BasePlotter):
         return cam_pyramid_world, cam_pos_world, cam_lookat_world, cam_up_world, cam_right_world
 
     def add_cam(self, M_ext, plot_color, plot_name):
+        logger.debug(f"plot_name: {plot_name}, M_ext: {M_ext}")
         cam_pyramid_world, cam_pos_world, cam_lookat_world, cam_up_world, cam_right_world = self.cam2world(M_ext)
+        logger.debug(f"plot_name: {plot_name}, cam_pos_world: {cam_pos_world}")
         # self.cam_pyramid_world_lis.append((cam_pyramid_world, plot_color, plot_name))
         self.cam_pyramid_world_lis.append(cam_pyramid_world)
         self.cam_pos_world_lis.append(cam_pos_world)
