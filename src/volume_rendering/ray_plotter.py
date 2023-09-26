@@ -5,32 +5,16 @@ from src.utils.logger_global import logger
 from src.utils.base_plotter import BasePlotter
 from src.utils.camera_plotter import CameraPlotter
 from src.utils.camera_mover import CameraMover
-from src.volume_rendering.raycaster import RayCaster
+from src.volume_rendering.ray_caster import RayCaster
 
 
 # poetry run python -m src.volume_rendering.ray_plotter
 
 class RayPlotter(BasePlotter):
-    # def __init__(self, w_, h_, fov = 45):
     def __init__(self):
         super().__init__()
-
-        # カメラからスクリーンまでの距離
-        # self.fl_x = w_ / (2. * np.tan(np.radians(fov) * 0.5))
-        # self.fl_y = h_ / (2. * np.tan(np.radians(fov) * 0.5))
-        # self.cx = (float)(w_ / 2)
-        # self.cy = (float)(h_ / 2)
-        
-        # # カメラからスクリーンまでの距離
-        # if use_transforms_json:
-        #     self.fl_x = transforms["fl_x"]
-        #     self.fl_y = transforms["fl_y"]
-        #     self.cx = transforms["cx"]
-        #     self.cy = transforms["cy"]
-            
         self.ray_dirs_list = []
     
-
     def get_traces_ray(self, cam_pos, ray_dir, tmax, tmax_margin, if_intersect, plot_name):
         # tmax = 1.0
         # logger.debug(f"cam_pos: {cam_pos}, ray_dir_0: {ray_dir_0}")

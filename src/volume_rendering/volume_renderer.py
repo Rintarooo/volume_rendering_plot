@@ -1,7 +1,7 @@
 import numpy as np
 from typing import Any
-
 import matplotlib.pyplot as plt
+
 from src.volume_rendering.aabb import AABB
 from src.utils.logger_global import logger
 
@@ -36,22 +36,19 @@ def render_img_from_volume(
     density_plot_dic = {"density_lis":[], "tmin":0, "tmax":0, "ray_idx":0}
     # density_plot_index_ray = int(len(ray_dirs)/2)#5
     density_plot_index_ray = int(h_ * w_ /2)#5
-    logger.debug(f"density_plot_index_ray: {density_plot_index_ray}")
-    density_plot_dic["ray_idx"] = density_plot_index_ray
     assert density_plot_index_ray < ray_dirs.shape[0]*ray_dirs.shape[1], "ray index is over list ray_dirs"
 
 
     # for ray_idx in range(len(ray_dirs)):
+    # white, volume cell has homogenious color
+    cell_color = np.array([255,255,255])#np.array([0,0,255])
+    ## light blue
+    background_color = np.array([157.,204.,224.])
     cnt_intersect = 0
     for px in range(w_):
-        # idx_px = px * w_
         for py in range(h_):
-            # black
-            # render_color = np.array([0,0,0])
-            # background_color = np.array([0,0,0])
+            # intialize render_color, black
             render_color = np.array([0.,0.,0.])
-            ## light blue
-            background_color = np.array([157.,204.,224.])
             ## transmittance, initialize transmission to 1 (fully transparent, so background color is rendered)
             T_ = 1. 
             # ray_idx = idx_px + py
@@ -61,7 +58,6 @@ def render_img_from_volume(
             ray_idx = px * w_ + py
             ray_dir = ray_dirs[px][py]
             tmin, tmax, if_intersect = aabb.ray_intersect_and_get_mint(ray_dir, cam_pos)
-            logger.debug(f"[px,py]: [{px},{py}], if_intersect: {if_intersect}")
             if not if_intersect:
                 tmin = 4.5
                 tmax = 9.5
@@ -71,7 +67,10 @@ def render_img_from_volume(
             assert tmin < tmax, "ray marching range"
             delta = (tmax-tmin)/num_points
 
-            logger.info(f"ray idx: {ray_idx}/{w_*h_}")
+            logger.info(f"ray idx: {ray_idx}/{w_*h_}, if_intersect: {if_intersect}, [px,py]: [{px},{py}]")
+            
+            if ray_idx == density_plot_index_ray and if_intersect is False:
+                density_plot_index_ray += 1
 
             if if_intersect:
                 cnt_intersect += 1
@@ -82,8 +81,10 @@ def render_img_from_volume(
                     if ray_idx == density_plot_index_ray:
                         density_plot_dic["density_lis"].append(cur_density)
                         if i == 0:
+                            density_plot_dic["ray_idx"] = ray_idx#density_plot_index_ray
                             density_plot_dic["tmin"] = tmin
                             density_plot_dic["tmax"] = tmax
+                    # logger.debug(f"ray_idx: {ray_idx}, density_plot_index_ray: {density_plot_index_ray}")
                     # transmittance *= np.exp(-cur_density * extinctionCoef * delta)
                     alpha_i = 1 - np.exp(-cur_density * delta)
                     T_ *= np.exp(-cur_density * delta)
@@ -93,29 +94,24 @@ def render_img_from_volume(
                     # T_i = sampling_light(light_pos, point_pos, delta, aabb)
                     # T_i = 1.
 
-                    # white, volume cell has homogenious color
-                    color = np.array([255,255,255])#np.array([0,0,255])
-
                     # light emission
                     # weight_i = T_i*alpha_i
                     weight_i = T_*alpha_i
 
-                    logger.debug(f"ray_idx: {ray_idx}, weight_i: {weight_i}, delta: {delta}, ray step: {i}, point_pos: {point_pos}, cur_density: {cur_density}")
+                    logger.debug(f"ray_idx: {ray_idx}, ray step: {i}, weight_i: {weight_i}, delta: {delta}, point_pos: {point_pos}, cur_density: {cur_density}")
                     # render_color += np.uint8(weight_i*color)
-                    render_color += weight_i*color
-                    # render_color += weight_i*color*5
+                    render_color += weight_i*cell_color
+                    # render_color += weight_i*cell_color*5
                 
             # logger.debug(f"ray_idx: {ray_idx}, px: {px}, py: {py}, np.uint8(render_color): {np.uint8(render_color)}")
             # logger.debug(f"img_x: {w_-px-1}, img_y: {h_-py-1}")
-            # render_img[py][px] = np.uint8(render_color)
             # logger.debug(f"transmittance: {T_}, background_color: {background_color}, render_color: {render_color}")
-            render_color =  T_ * background_color + (1.0-T_) * render_color
+            render_color =  T_ * background_color + (1.0 - T_) * render_color
             # render_img[w_-px-1][h_-py-1] = np.uint8(render_color)
             # render_img[px][py] = np.uint8(render_color)
             render_img[py][px] = np.uint8(render_color)
             
 
-    # plt.imsave("./render.png", render_img)
     render_path , density_plot_path = "./out/render.png", "./out/density_plot.png"
     plt.imsave(render_path, np.uint8(render_img))
     logger.info(f"save render_path: {render_path}")
@@ -123,9 +119,9 @@ def render_img_from_volume(
     
     logger.debug(f"density_lis: {density_plot_dic['density_lis']}")
     plt.plot(np.linspace(density_plot_dic["tmin"], density_plot_dic["tmax"], len(density_plot_dic["density_lis"])), density_plot_dic["density_lis"], ".", markersize=8)
-    plt.xlabel(f"tmin:{density_plot_dic['tmin']} - tmax:{density_plot_dic['tmax']}")
+    plt.xlabel(f"tmin:{density_plot_dic['tmin']:.2f} - tmax:{density_plot_dic['tmax']:.2f}")
     plt.ylabel("density")
     plt.ylim(0, 1)
     plt.title(f"ray index: {density_plot_dic['ray_idx']}")
-    logger.info(f"save density_plot_path: {density_plot_path}")
     plt.savefig(density_plot_path)
+    logger.info(f"save density_plot_path: {density_plot_path}")

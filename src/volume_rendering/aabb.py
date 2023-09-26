@@ -2,14 +2,9 @@ import numpy as np
 
 from src.utils.logger_global import logger
 from src.volume_rendering.cube_plotter import CubePlotter
+from src.utils.np_vec import swap_val
 
 # poetry run python -m src.volume_rendering.aabb
-
-def swap_val(a, b):
-    swap_tmp = a
-    a = b
-    b = swap_tmp
-    return a, b
 
 class AABB():
     def __init__(self, pos_cube_center, mint, maxt, grid_resolution) -> None:
@@ -209,7 +204,7 @@ class AABB():
         density = self.density_volume[xi][yi][zi][6]
         # if point_pos[0] == 0 and point_pos[1]==0:
             # logger.debug(f"\nxi: {xi}, yi: {yi}, zi: {zi}")
-        logger.debug(f"\nray point_pos: {point_pos}\ncell pos: [{x}, {y}, {z}]\nread density: {density}")
+        # logger.debug(f"\nray point_pos: {point_pos}\ncell pos: [{x}, {y}, {z}]\nread density: {density}")
         return density
     # }
 

@@ -107,33 +107,6 @@ class CameraMover:
         self.M_ext = R_ @ self.M_ext
         # self.M_ext = R_
         logger.debug(f"R_ @ self.M_ext: {self.M_ext}")
-
-        
-"""     vec1 = aim_pos - cam_pos
-        vec2 = cam_lookat - cam_pos
-        # vec = vec1 - vec2
-        # rad = np.arctan2(vec[0], vec[1], vec[2])
-
-        # https://qiita.com/hacchi_/items/7e6f433d465df9378d7a
-        # コサインの計算
-        length_vec_a = np.linalg.norm(vec1)
-        length_vec_c = np.linalg.norm(vec2)
-        logger.debug(f"vec1: {vec1}, vec2: {vec2}, length_a: {length_vec_a}, length_c: {length_vec_c}")
-        inner_product = np.inner(vec1, vec2)
-        cos = 0
-        try:
-            cos = inner_product / (length_vec_a * length_vec_c)
-        except ZeroDivisionError as e:
-            logger.debug(f"devide zero :{e}")
-
-        # 角度（ラジアン）の計算
-        rad = np.arccos(cos)
-        logger.debug(f"rad: {rad}")
-
-        angle = np.rad2deg(rad)
-        self.rotate_x(angle)
-        self.rotate_y(angle)
-        self.rotate_z(angle)"""
         
 
 if __name__ == "__main__":

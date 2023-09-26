@@ -42,7 +42,7 @@ poetry shell
 python -V
 
 # add packages
-poetry add numpy matplotlib plotly scipy
+poetry add numpy matplotlib plotly scipy pyyaml
 ```
 
 ## Execute Python

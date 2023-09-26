@@ -7,7 +7,7 @@ from src.utils.camera_mover import CameraMover
 
 from src.volume_rendering.cube_plotter import CubePlotter
 from src.volume_rendering.ray_plotter import RayPlotter
-from src.volume_rendering.raycaster import RayCaster
+from src.volume_rendering.ray_caster import RayCaster
 from src.volume_rendering.aabb import AABB
 
 # poetry run python -m src.tests.aabb_test

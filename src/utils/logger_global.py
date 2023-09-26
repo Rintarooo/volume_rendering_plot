@@ -9,15 +9,14 @@ import os
 
 logger = logging.getLogger(__name__)
 # logger = logging.getLogger()
-# logging.disable(logging.CRITICAL)
 
 log_file = './logs/logging.log'
 
 if os.path.exists(log_file):
     os.remove(log_file)
     
-filehandler = logging.FileHandler(log_file)
 # streamhandler = logging.StreamHandler()
+filehandler = logging.FileHandler(log_file)
 
 # format = '[%(asctime)s][%(levelname)s] %(message)s'
 format = '[%(asctime)s][%(levelname)s] {%(module)s.%(funcName)s, l: %(lineno)d} %(message)s'
@@ -30,6 +29,7 @@ filehandler.setFormatter(formatter)
 # logger.addHandler(streamhandler)
 logger.addHandler(filehandler)
 
+# logging.disable(logging.CRITICAL)
 logger.setLevel(logging.INFO)  # DEBUG #INFO #WARNING
 
 logger.info("Logger INFO mode Start!")

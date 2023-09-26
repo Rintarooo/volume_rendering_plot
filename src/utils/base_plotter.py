@@ -12,10 +12,7 @@ class BasePlotter:
                 zaxis = dict(range=(-plot_range, plot_range)),
                 camera = dict(
                     up = dict(x=0,y=1,z=0),
-                )
-        ))
-        self.fig.update_layout(
-            scene=dict(
+                    ),
                 aspectmode='cube'
             )
         )

@@ -1,6 +1,12 @@
 import numpy as np
 from src.utils.logger_global import logger
 
+def swap_val(a, b):
+    swap_tmp = a
+    a = b
+    b = swap_tmp
+    return a, b
+
 def degree2radian(deg):
     return deg * np.pi / 180.
 

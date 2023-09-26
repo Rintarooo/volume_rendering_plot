@@ -4,22 +4,23 @@ import plotly.graph_objects as go
 from src.utils.logger_global import logger
 from src.utils.base_plotter import BasePlotter
 from src.utils.np_vec import normalize
+from src.utils.camera_mover import CameraMover
+from src.volume_rendering.cube_plotter import CubePlotter
 
 # poetry run python -m src.utils.camera_plotter
 
 class CameraPlotter(BasePlotter):
-    def __init__(self, w_, h_, cam_pos, cam_lookat, cam_up, fov = 45, plot_scale=1.0):
+    def __init__(self, w_, h_, cam_pos, cam_lookat, cam_up, cam_right, fov = 45):
         super().__init__()
         self.cam_pos = cam_pos
         self.cam_lookat = cam_lookat
         self.cam_up = cam_up
+        self.cam_right = cam_right
         # self.look_dir = normalize(self.cam_lookat - self.cam_pos)# look direction
         # self.cam_right = np.cross(self.look_dir, self.cam_up)
-        self.cam_right = normalize(np.cross(self.cam_lookat, self.cam_up))
         
         self.cam_pyramid, self.lines = self.get_pyramid()
         
-
         self.w_ = w_
         self.h_ = h_
         # カメラからスクリーンまでの距離
@@ -27,7 +28,7 @@ class CameraPlotter(BasePlotter):
         self.fl_y = h_ / (2. * np.tan(np.radians(fov) * 0.5))
 
 
-        self.plot_scale = plot_scale
+        # self.plot_scale = plot_scale
         # logger.debug(f"self.plot_scale: {self.plot_scale}")
         self.cam_pyramid_world_lis = []
         self.cam_pos_world_lis = []
@@ -309,12 +310,37 @@ class CameraPlotter(BasePlotter):
     
 
 if __name__ == "__main__":
-    # from logger_global import logger
     w_, h_ = 3, 3
-    plot_scale = 1.0
     fov = 80#120#45
     cam_pos = np.array([0, 0, 0])
     cam_lookat = np.array([0, 0, -1])
     cam_up = np.array([0, 1, 0])
+    cam_right = np.cross(cam_lookat, cam_up)
         
-    cam_plotter = CameraPlotter(w_, h_, cam_pos, cam_lookat, cam_up, fov, plot_scale)
+    cam_plotter = CameraPlotter(w_, h_, cam_pos, cam_lookat, cam_up, cam_right, fov)
+
+    a = 3
+    pos_cube_center = (0,0,0)#(0,0,7)#(0,0,-3)
+    mint, maxt = -1.0, 1.0#-2.0, 2.0#-3.0, 3.0#-0.5, 0.5
+    rgba = 'rgba(0,0,0,0.2)'
+    cube_plotter = CubePlotter(pos_cube_center, mint, maxt, rgba)
+
+    num_camera = 10#3
+    for i in range(num_camera):
+        camera_mover = CameraMover()
+        radius = 5
+        degree = 360./num_camera * i
+        angle = np.radians(degree)
+        step_x = radius*np.cos(angle)
+        step_z = radius*np.sin(angle)
+        camera_mover.step_x(step_x)
+        camera_mover.step_z(step_z)                
+        camera_mover.rotate_y(degree-90)
+        M_ext = camera_mover.M_ext
+        cam_plotter.add_cam(M_ext, plot_color='blue', plot_name='frame'+str(i))
+
+    cam_plotter.add_trace_cam_coord()
+    cam_plotter.add_trace_cam_screen()
+    trace_cube = cube_plotter.get_trace_cube()
+    cam_plotter.fig.add_trace(trace_cube)
+    cam_plotter.fig_show()

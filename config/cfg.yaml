@@ -1,0 +1,66 @@
+# cam settings 
+fov: 60
+#60#80#45#30
+
+w_: 256
+h_: 256
+#256,256#3, 3#16, 16#9, 9#5,5#4, 4#64,64#32, 32##128, 128#1,1
+
+cam_pos: [0,0,0]
+cam_lookat: [0,0,-1]
+# np.array([0, 0, 1])#([0, 0, 0])#([0, 0, -1])
+cam_up: [0,1,0]
+
+
+
+# AABB
+grid_resolution: 16
+# 16#4#128#30
+
+pos_cube_center: [0,0,0]
+#(0,0,-3)#(0,0,9)#(0,0,7)
+
+mint: -1.0
+maxt: 1.0
+#-1.0, 1.0#-2.0, 2.0#-3.0, 3.0#-0.5, 0.5
+
+density_mode: "cube"
+# "sphere"
+
+
+
+# Plotly
+plot_flag: True
+ray_plot_flag: True
+ray_plot_thres_reso: 64
+
+# Volume Rendering
+num_points: 15
+#5#10#128#30
+
+num_cam: 1
+
+# cam_step: [step_x, step_y, step_z]
+cam_step: [1.45, 1.10, 3.10]
+# step_x, step_y, step_z = 1.45, 1.10, 3.10
+# cam_step: [-2, -2, -2]
+# step_x, step_y, step_z = -1.45, -1.10, -3.10
+# step_x, step_y, step_z = 0., 0., 3.
+# cam_step: [2.5, 2.5, 2.5]
+# step_x, step_y, step_z = 2.5, 2.5, 2.5
+# step_x, step_y, step_z = 2.5, 2.5, 0
+# step_x, step_y, step_z = 2.5, 0., 2.5
+# step_x, step_y, step_z = 2.5, 0, 0
+# step_x, step_y, step_z = -1, -1, -3
+
+aim_pos_world: [0.,0.,0.]
+# aim_pos_world = np.array([0.,0.,step_z])
+
+cam_rotate_around_aim_flag: True
+
+# if cam_rotate_around_aim_flag: False
+cam_rotate: [0,0,0]
+# cam_mover.rotate_x(90)
+# cam_mover.rotate_y(45)
+# cam_mover.rotate_z(-25)
+

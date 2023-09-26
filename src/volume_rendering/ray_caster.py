@@ -2,21 +2,22 @@ import numpy as np
 
 from src.utils.logger_global import logger
 from src.utils.camera_mover import CameraMover
+from src.volume_rendering.cube_plotter import CubePlotter
 from src.utils.camera_plotter import normalize
 
 # poetry run python -m src.volume_rendering.raycaster
 
 class RayCaster():
     def __init__(self, w_, h_, cam_pos, cam_lookat, cam_up, cam_right, fov = 45) -> None:
-        # カメラからスクリーンまでの距離
         self.w_ = w_
         self.h_ = h_
+        # カメラからスクリーンまでの距離
         self.fl_x = w_ / (2. * np.tan(np.radians(fov) * 0.5))
         self.fl_y = h_ / (2. * np.tan(np.radians(fov) * 0.5))
         self.cx = (float)(w_ / 2)
         self.cy = (float)(h_ / 2)
-        self.cam_lookat = cam_lookat# np.array([0, 0, 1])#([0, 0, 0])#([0, 0, -1])
         self.cam_pos = cam_pos
+        self.cam_lookat = cam_lookat
         self.cam_up = cam_up
         self.cam_right = cam_right
 
@@ -32,6 +33,7 @@ class RayCaster():
 
         # ray_dirs = []
         ray_dirs_world = np.zeros([self.w_, self.h_, 3])
+        # ray_dirs_world = np.zeros([self.h_, self.w_, 3])
         for px in range(self.w_):
             for py in range(self.h_):
         # for px in range(-1., 1., dw):
